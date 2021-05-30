@@ -6,89 +6,107 @@ const server = require("../server");
 const chaiHttp = require("chai-http");
 chai.use(chaiHttp);
 
-suite("Functional Tests", function () {
-  suite("Integration tests with chai-http", function () {
+suite("Functional Tests", function() {
+  suite("Integration tests with chai-http", function() {
     // #1
-    test("Test GET /hello with no name", function (done) {
+    test("Test GET /hello with no name", function(done) {
       chai
         .request(server)
         .get("/hello")
-        .end(function (err, res) {
+        .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, "hello Guest");
           done();
         });
     });
     // #2
-    test("Test GET /hello with your name", function (done) {
+    test("Test GET /hello with your name", function(done) {
       chai
         .request(server)
         .get("/hello?name=Rufus")
-        .end(function (err, res) {
+        .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, "hello Rufus");
           done();
         });
     });
     // #3
-    test('send {surname: "Colombo"}', function (done) {
+    test('send {surname: "Colombo"}', function(done) {
       chai
         .request(server)
         .put("/travellers")
-        .send({surname: "Colombo"})
-        .end(function (err, res) {
+        .send({ surname: "Colombo" })
+        .end(function(err, res) {
           //console.log(Object.getOwnPropertyNames(res))
           //console.log(res.type);
           //console.log(res.body.name);
           assert.equal(res.status, 200);
           assert.equal(res.type, 'application/json');
           assert.equal(res.body.name, 'Cristoforo');
-          assert.equal(res.body.surname,'Colombo');
+          assert.equal(res.body.surname, 'Colombo');
 
-          
-        done();
+
+          done();
         });
     });
     // #4
-    test('send {surname: "da Verrazzano"}', function (done) {
+    test('send {surname: "da Verrazzano"}', function(done) {
       chai
         .request(server)
         .put("/travellers")
-        .send({surname: "da Verrazzano"})
-        .end(function (err, res) {
+        .send({ surname: "da Verrazzano" })
+        .end(function(err, res) {
           //console.log(Object.getOwnPropertyNames(res))
           //console.log(res.type);
           //console.log(res.body.name);
           assert.equal(res.status, 200);
           assert.equal(res.type, 'application/json');
           assert.equal(res.body.name, 'Giovanni');
-          assert.equal(res.body.surname,'da Verrazzano');
-        
-      done();
-    });
+          assert.equal(res.body.surname, 'da Verrazzano');
+
+          done();
+        });
     })
   });
 });
 
 const Browser = require("zombie");
- Browser.site = 'https://boilerplate-mochachai.johnrutkauskas.repl.co/';
-  const browser = new Browser();
-suite("Functional Tests with Zombie.js", function () {
+Browser.site = 'https://boilerplate-mochachai.johnrutkauskas.repl.co/';
 
-  suite('"Famous Italian Explorers" form', function () {
+
+suite("Functional Tests with Zombie.js", function() {
+
+  suite('"Famous Italian Explorers" form', function() {
     // #5
-    test('submit "surname" : "Colombo" - write your e2e test...', function (done) {
-      browser.fill("surname", "Colombo").pressButton("submit", function () {
-        assert.fail();
+    test('submit "surname" : "Colombo" - write your e2e test...', function(done) {
+      const browser = new Browser();
 
+      browser.visit('https://boilerplate-mochachai.johnrutkauskas.repl.co/', function () {
+          // fill search query field with value "zombie"
+          browser.fill("surname", "Colombo").pressButton("submit", function() {
+        browser.assert.success();
+        browser.assert.text('span#name', 'Cristoforo');
+        browser.assert.text('span#surname', 'Colombo');
+        browser.assert.elements('span#dates', 1);
         done();
       });
     });
-    // #6
-    test('submit "surname" : "Vespucci" - write your e2e test...', function (done) {
-      assert.fail();
+    })
 
-      done();
+    // #6
+    test('submit "surname" : "Vespucci" - write your e2e test...', function(done) {
+      const browser = new Browser();
+
+      browser.visit('https://boilerplate-mochachai.johnrutkauskas.repl.co/', function () {
+          // fill search query field with value "zombie"
+          browser.fill("surname", "Vespucci").pressButton("submit", function() {
+            browser.assert.success();
+            browser.assert.text('span#name', 'Amerigo');
+            browser.assert.text('span#surname', 'Vespucci');
+            browser.assert.elements('span#dates', 1);
+            done();
+          })       
+      });
     });
-  });
-});
+  })
+})
