@@ -14,8 +14,8 @@ suite("Functional Tests", function () {
         .request(server)
         .get("/hello")
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, "hello Guest");
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "hello Guest");
           done();
         });
     });
@@ -23,10 +23,10 @@ suite("Functional Tests", function () {
     test("Test GET /hello with your name", function (done) {
       chai
         .request(server)
-        .get("/hello?name=xy_z")
+        .get("/hello?name=Rufus")
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, "hello xy_z");
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "hello Rufus");
           done();
         });
     });
@@ -35,24 +35,44 @@ suite("Functional Tests", function () {
       chai
         .request(server)
         .put("/travellers")
-
+        .send({surname: "Colombo"})
         .end(function (err, res) {
-          assert.fail();
+          //console.log(Object.getOwnPropertyNames(res))
+          //console.log(res.type);
+          //console.log(res.body.name);
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name, 'Cristoforo');
+          assert.equal(res.body.surname,'Colombo');
 
-          done();
+          
+        done();
         });
     });
     // #4
     test('send {surname: "da Verrazzano"}', function (done) {
-      assert.fail();
-
+      chai
+        .request(server)
+        .put("/travellers")
+        .send({surname: "da Verrazzano"})
+        .end(function (err, res) {
+          //console.log(Object.getOwnPropertyNames(res))
+          //console.log(res.type);
+          //console.log(res.body.name);
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name, 'Giovanni');
+          assert.equal(res.body.surname,'da Verrazzano');
+        
       done();
     });
+    })
   });
 });
 
 const Browser = require("zombie");
-
+ Browser.site = 'https://boilerplate-mochachai.johnrutkauskas.repl.co/';
+  const browser = new Browser();
 suite("Functional Tests with Zombie.js", function () {
 
   suite('"Famous Italian Explorers" form', function () {
